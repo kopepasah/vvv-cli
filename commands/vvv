@@ -1,0 +1,13 @@
+#!/usr/bin/env node
+
+var pkg = require( '../package.json' );
+var program = require( 'commander' );
+
+program
+	.version( pkg.version )
+
+	// Commands
+	.command( 'config [name]', 'configs VVV with the necessary information for running commands.' )
+	.command( 'wp [command]', 'runs a WP-CLI command in the current directory of a VVV instance.' )
+
+	.parse( process.argv );

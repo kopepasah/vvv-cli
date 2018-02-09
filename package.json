@@ -2,10 +2,17 @@
   "name": "vvv-cli",
   "version": "0.0.1",
   "description": "Command line interface for Varying Vagrant Vagrants.",
-  "main": "index.js",
+  "main": "commands/vvv",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Justin Kopepasah <justin@kopepasah.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "bin": {
+    "vvv": "./commands/vvv"
+  },
+  "dependencies": {
+    "chalk": "^2.3.0",
+    "commander": "^2.12.2"
+  }
 }

@@ -1,0 +1,76 @@
+#!/usr/bin/env node
+
+const fs     = require( 'fs' );
+const path   = require( 'path' );
+const chalk  = require( 'chalk' );
+const config = require( 'commander' );
+
+// Initilize the program.
+config
+	.option( '-d, --default', 'Set machine as default.' )
+	.parse( process.argv );
+
+// Check if we are in an active VVV 2.0+ installation.
+for ( let file of [ 'vvv-config.yml', 'vvv-custom.yml' ] ) {
+	if ( ! fs.existsSync( file ) ) {
+		console.log( `${ chalk.red( 'Error:' ) } This does not seem to be an active VVV install. Please change directories into a VVV install and run the config command again.` );
+		process.exit( 1 );
+	} else {
+		continue;
+	}
+}
+
+/**
+ * Verify the machine name is passed as an argument to the command and set the
+ * machine name varible for use in the script.
+ */
+if ( 0 === config.args.length ) {
+	console.log( `${ chalk.red( 'Error:' ) } Machine name must be passed as an argument (e.g. vvv config main).` );
+	process.exit( 1 );
+} else {
+	config.machine = config.args.shift();
+}
+
+/**
+ * Throw and error if the machine name is not defined; otherwise, configure the
+ * machine.
+ *
+ * @param {String} config.machine The machine name, passed as an argument.
+ */
+let message = '',
+	machines = {},
+	filePath = `${ path.resolve( __dirname, '..' ) }/machines.json`;
+
+if ( fs.existsSync( filePath ) ) {
+	machines = require( filePath );
+
+	if ( config.default ) {
+		machines.default = config.machine;
+		message = `${ chalk.green( 'Success:' ) } Machine ${ chalk.cyan( config.machine ) } set as default.`;
+	}
+
+	if ( machines.list.hasOwnProperty( config.machine ) ) {
+		if ( ! config.default ) {
+			if ( process.cwd() === machines.list[ config.machine ] ) {
+				message = `${ chalk.yellow( 'Notice:' ) } Machine ${ chalk.cyan( config.machine ) } already configured.`;
+			} else {
+				message = `${ chalk.yellow( 'Notice:' ) } Machine ${ chalk.cyan( config.machine ) } already exists and is set to a different location: ${ machines.list[ config.machine ] }`;
+			}
+		}
+	} else {
+		machines.list[ config.machine ] = process.cwd();
+		message = `${ chalk.green( 'Success:' ) } Machine ${ chalk.cyan( config.machine ) } configured at ${ machines.list[ config.machine ] }`;
+	}
+} else {
+	machines = {
+		'default': config.machine,
+		'list' : {}
+	};
+
+	machines.list[ config.machine ] = process.cwd();
+	message = `${ chalk.green( 'Success:' ) } Machine ${ chalk.cyan( config.machine ) } configured at ${ machines.list[ config.machine ] }`;
+}
+
+// Log the message and write the file.
+console.log( `  ${ message }` );
+fs.writeFileSync( filePath, JSON.stringify( machines ) );
