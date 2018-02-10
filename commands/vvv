@@ -6,7 +6,7 @@ var program = require( 'commander' );
 program
 	.version( pkg.version )
 
-	.command( 'config [name]', 'config VVV machine information.' )
-	.command( 'wp [command]', 'run a WP-CLI command in the directory of a VVV machine.' )
+	.command( 'config <name>', 'config VVV machine information.' )
+	.command( 'wp <site> <command>', 'run a WP-CLI command in the directory of a VVV machine.' )
 
 	.parse( process.argv );
