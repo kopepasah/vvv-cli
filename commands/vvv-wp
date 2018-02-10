@@ -1,0 +1,17 @@
+#!/usr/bin/env node
+
+const { spawn } = require( 'child_process' );
+const wp        = require( 'commander' );
+const { sites } = require( '../lib' );
+
+wp.parse( process.argv );
+
+let site = sites.getSite( wp.args.shift() );
+
+wp.args = wp.args.concat( wp.parseOptions( wp.rawArgs ).unknown );
+
+spawn( 'vagrant', [ 'ssh', `--command="cd ${ site.dir };wp ${ wp.args.join( ' ' ) };"` ], {
+	cwd: site.cwd,
+	shell: true,
+	stdio: 'inherit',
+} );

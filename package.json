@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "chalk": "^2.3.0",
-    "commander": "^2.12.2"
+    "commander": "^2.12.2",
+    "js-yaml": "^3.10.0"
   }
 }
